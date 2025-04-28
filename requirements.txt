@@ -1,4 +1,5 @@
 browser-use
+
 playwright
 python-dotenv
 langchain_openai
