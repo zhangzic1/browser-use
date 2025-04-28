@@ -9,7 +9,7 @@ import os
 
 import asyncio
 
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 
 ##task = "请搜索yc最新的batch，然后把前10公司名字和一句话介绍全部给我列出来，输出到txt文件"
 task = "帮我搜索podwise.ai上，张小珺Jùn｜商业访谈录，这个频道的最新一集播客的title，把播客的title和url都列出来，将文本内容写入到同目录下的txt文件中"
