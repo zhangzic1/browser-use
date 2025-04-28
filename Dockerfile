@@ -20,5 +20,3 @@ COPY test_nav.py .
 
 # 默认执行测试脚本
 CMD ["python", "test_nav.py"]
-# 修改Dockerfile最后一行
-CMD ["tail", "-f", "/dev/null"]  # 让容器保持运行

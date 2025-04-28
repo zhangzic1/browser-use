@@ -1,6 +1,6 @@
 from langchain_openai import ChatOpenAI
 from browser_use import Agent, Controller
-from browser_use import BrowserConfig
+from browser_use import BrowserConfig, Browser
 from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path

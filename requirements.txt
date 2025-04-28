@@ -1,7 +1,5 @@
 browser-use
 playwright
-dotenv
+python-dotenv
 langchain_openai
-pathlib
-os
-asyncio
+
