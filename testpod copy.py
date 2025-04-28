@@ -11,7 +11,7 @@ import asyncio
 
 CURRENT_DIR = Path(__file__).parent
 
-OPENROUTER_API_KEY = 
+OPENROUTER_API_KEY = "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"
 
 ##task = "请搜索yc最新的batch，然后把前10公司名字和一句话介绍全部给我列出来，输出到txt文件"
 task = "帮我在https://podwise.ai/dashboard/podcasts/189，这个张小珺Jùn｜商业访谈录的频道内，这个频道的最新一集播客的title，把播客的title和url都列出来，然后进入获取这个播客的字幕，字幕在这个Transcript的tab下，你在获取字幕前，要确保在这个Transcript的tab下，然后将Transcript的文本内容，全文字幕很长，在多个以episode-transcripts_paragraph开头的p class内，你直接把包含episode-transcripts_paragraph的上级div的结构内容，直接拷贝下来，复制写入到同目录下的txt文件中"

@@ -8,7 +8,7 @@ from pathlib import Path
 import os
 
 import asyncio
-
+CURRENT_DIR = Path(__file__).parent
 OPENROUTER_API_KEY = "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"
 
 ##task = "请搜索yc最新的batch，然后把前10公司名字和一句话介绍全部给我列出来，输出到txt文件"
