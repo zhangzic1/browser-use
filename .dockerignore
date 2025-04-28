@@ -1,0 +1,10 @@
+# 首先忽略所有
+*
+# 再把我们需要的整个项目文件都放行
+!docker-compose.yml
+!Dockerfile
+!requirements.txt
+!test_nav.py
+!podwise_cookies.json
+# 如果还有其他脚本，也要放行
+!testpod copy.py
