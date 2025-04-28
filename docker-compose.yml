@@ -4,8 +4,6 @@ services:
     build: .
     container_name: browser-use-poc
     restart: "no"
-    volumes:
-      - ./:/usr/src/app  # 将输出文件映射到主机
     environment:
       - OPENROUTER_API_KEY=
     # 可以添加volumes等配置
