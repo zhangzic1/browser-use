@@ -16,6 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install playwright && playwright install chromium
 
 # 复制测试脚本
+COPY browser_use/ ./browser_use/
 COPY test_nav.py .
 
 # 默认执行测试脚本

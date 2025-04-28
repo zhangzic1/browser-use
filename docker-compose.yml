@@ -5,7 +5,7 @@ services:
     container_name: browser-use-poc
     restart: on-failure
     volumes:
-      - ./output:/usr/src/app  # 将输出文件映射到主机
+      - ./:/usr/src/app  # 将输出文件映射到主机
     environment:
       - OPENROUTER_API_KEY=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
     # 可以添加volumes等配置

@@ -15,7 +15,7 @@ task = "帮我搜索reddit上，youtube频道的基本的内容，将文本内�
 
 # Basic configuration
 config = BrowserConfig(
-    headless=False,
+    headless=True,
     disable_security=True
 )
 
@@ -66,4 +66,10 @@ async def main():
         await write_to_file(str(result), output_filename)
         print(f"结果已保存到文件: {CURRENT_DIR / output_filename}")
 
-asyncio.run(main())
+try:
+       asyncio.run(main())
+except Exception as e:
+    print(f"运行出错: {e}")
+    # 记录详细错误
+    import traceback
+    print(traceback.format_exc())
