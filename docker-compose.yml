@@ -5,5 +5,7 @@ services:
     container_name: browser-use-poc
     restart: "no"
     environment:
-      - OPENROUTER_API_KEY=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
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+              # 如果还有其他需要从 .env 加载的变量，也用同样格式添加
+              # - OPENAI_API_KEY=${OPENAI_API_KEY}
     # 可以添加volumes等配置
