@@ -8,7 +8,7 @@ import os
 
 import asyncio
 
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY =
 
 ##task = "请搜索yc最新的batch，然后把前10公司名字和一句话介绍全部给我列出来，输出到txt文件"
 task = "帮我搜索reddit上，youtube频道的基本的内容，将文本内容写入到同目录下的txt文件中"
