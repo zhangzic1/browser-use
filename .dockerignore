@@ -1,10 +1,13 @@
-# 首先忽略所有
+# 忽略所有
 *
-# 再把我们需要的整个项目文件都放行
+
+# 先放行所有目录，以便文件例外能生效
+!*/
+
+# 再放行我们真正需要的文件
 !docker-compose.yml
 !Dockerfile
 !requirements.txt
 !test_nav.py
 !podwise_cookies.json
-# 如果还有其他脚本，也要放行
 !testpod copy.py
