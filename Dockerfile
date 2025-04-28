@@ -21,4 +21,5 @@ RUN pip install playwright && playwright install chromium
 COPY test_nav.py .
 
 # 默认执行测试脚本
-CMD ["python", "test_nav.py"]
+CMD ["tail", "-f", "/dev/null"]
+#CMD ["python", "test_nav.py"]
