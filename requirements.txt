@@ -1,2 +1,7 @@
 browser-use
 playwright
+dotenv
+langchain_openai
+pathlib
+os
+asyncio
