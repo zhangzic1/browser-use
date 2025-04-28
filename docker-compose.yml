@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  browser-use-poc:
+    build: .
+    container_name: browser-use-poc
+    restart: on-failure
+    # 可以添加volumes等配置
