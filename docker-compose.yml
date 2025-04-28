@@ -5,5 +5,5 @@ services:
     container_name: browser-use-poc
     restart: "no"
     environment:
-      - OPENROUTER_API_KEY=
+      - OPENROUTER_API_KEY=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
     # 可以添加volumes等配置
