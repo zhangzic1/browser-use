@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
 from browser_use import Agent, Controller
 from browser_use import BrowserConfig, Browser
+from browser_use.browser.context import BrowserContextConfig, BrowserContext
 from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path
@@ -11,16 +12,17 @@ import asyncio
 OPENROUTER_API_KEY = "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"
 
 ##task = "请搜索yc最新的batch，然后把前10公司名字和一句话介绍全部给我列出来，输出到txt文件"
-task = "帮我搜索reddit上，youtube频道的基本的内容，将文本内容写入到同目录下的txt文件中"
+task = "帮我搜索podwise.ai上，张小珺Jùn｜商业访谈录，这个频道的最新一集播客的title，把播客的title和url都列出来，将文本内容写入到同目录下的txt文件中"
 
-# Basic configuration
-config = BrowserConfig(
-    headless=True,
-    disable_security=True
+config = BrowserContextConfig(
+    cookies_file=str(CURRENT_DIR / "podwise_cookies.json"),
+    wait_for_network_idle_page_load_time=3.0,
+    locale='en-US',
+    user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
 )
 
-browser = Browser(config=config)
-
+browser = Browser()
+context = BrowserContext(browser=browser, config=config)
 
 llm = ChatOpenAI(
     model="anthropic/claude-3.7-sonnet",  # 可以选择任何OpenRouter支持的模型
@@ -54,7 +56,7 @@ async def main():
     agent = Agent(
         task=task,
         llm=llm,
-        browser=browser,
+       browser_context=context,
         controller=controller,  # 使用自定义控制器 - 2024-03-24添加
     )
     result = await agent.run()
@@ -66,10 +68,4 @@ async def main():
         await write_to_file(str(result), output_filename)
         print(f"结果已保存到文件: {CURRENT_DIR / output_filename}")
 
-try:
-       asyncio.run(main())
-except Exception as e:
-    print(f"运行出错: {e}")
-    # 记录详细错误
-    import traceback
-    print(traceback.format_exc())
+asyncio.run(main())
