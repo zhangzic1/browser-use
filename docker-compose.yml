@@ -3,7 +3,7 @@ services:
   browser-use-poc:
     build: .
     container_name: browser-use-poc
-    restart: on-failure
+    restart: "no"
     volumes:
       - ./:/usr/src/app  # 将输出文件映射到主机
     environment:
