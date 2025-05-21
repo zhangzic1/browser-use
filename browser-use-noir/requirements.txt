@@ -1,0 +1,4 @@
+langchain_openai>=0.3.1
+python-dotenv>=1.0.1
+browser_use>=0.1.45
+playwright>=1.51.0 

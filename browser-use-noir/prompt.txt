@@ -1,0 +1,273 @@
+请使用browser-use工具帮我在携程上搜索并预订酒店。请按照以下步骤操作，确保每一步都等待页面响应：
+以下是大概的执行步骤，请你替换其中的酒店名字，目的地和日期为：
+酒店名：fav takamatsu；目的地：takamatsu，japan；入住时间：6月1日。退房时间：6月3日。
+日期选择器步骤请直接用js方法进行设置
+
+1. 导航到携程酒店页面：
+   await page.goto('https://hotels.ctrip.com/', { waitUntil: 'networkidle2', timeout: 60000 });
+   await page.waitForTimeout(2000);
+
+2. 处理可能出现的弹窗：
+   try {
+     const closeButtons = await page.$$('.close-btn, .close, [class*="close"]');
+     if (closeButtons.length > 0) {
+       await closeButtons[0].click();
+       await page.waitForTimeout(1000);
+     }
+   } catch (e) {
+     console.log('无弹窗或处理弹窗失败');
+   }
+
+
+3. 设置入住和退房日期（绕过日历控件）
+   // 方法一：使用 page.fill 直接设置日期（会自动触发必要的事件）
+   try {
+     await page.fill(
+       'input.focus-input.show-hightlight.in-time, input[class*="in-time"]',
+       '2025-06-01'
+     );
+     await page.fill(
+       'input.focus-input.show-hightlight.out-time, input[class*="out-time"]',
+       '2025-06-03'
+     );
+     console.log('使用 page.fill 方法设置日期成功');
+   } catch (e) {
+     console.log('使用 page.fill 设置日期失败，尝试方法二:', e);
+     
+     // 方法二：使用 page.evaluate 注入 JavaScript 直接设置值
+     await page.evaluate(() => {
+       const checkIn = document.querySelectorAll(
+         'input.focus-input.show-hightlight.in-time, input[class*="in-time"]'
+       );
+       const checkOut = document.querySelectorAll(
+         'input.focus-input.show-hightlight.out-time, input[class*="out-time"]'
+       );
+       
+       if (checkIn.length > 0 && checkOut.length > 0) {
+         // 设置值
+         checkIn[0].value = '2025-06-01';
+         checkOut[0].value = '2025-06-03';
+         
+         // 触发事件以确保表单状态更新
+         const event = new Event('change', { bubbles: true });
+         checkIn[0].dispatchEvent(event);
+         checkOut[0].dispatchEvent(event);
+         
+         console.log('使用 evaluate 方法设置日期成功');
+       } else {
+         console.log('未找到日期输入框');
+       }
+     });
+   }
+   
+   // 等待一段时间让页面响应日期更改
+   await page.waitForTimeout(1000);
+
+
+3. 输入目的地：
+   // 通过检查，我看到目的地输入框有一个ID为"hotels-destination"并且class包含"show-highlight"
+   try {
+     const destinationInput = await page.$('input#hotels-destination.show-highlight');
+     if (destinationInput) {
+       await destinationInput.click();
+       await page.waitForTimeout(500);
+       await destinationInput.type('上海', {delay: 100});
+       await page.waitForTimeout(1000);
+       
+       // 选择下拉建议中的第一个选项
+       const suggestions = await page.$$('.drop-result-list li');
+       if (suggestions.length > 0) {
+         await suggestions[0].click();
+         await page.waitForTimeout(1000);
+       }
+     } else {
+       console.log('未找到目的地输入框，尝试备用选择器');
+       const altInput = await page.$('input[placeholder*="目的地"]');
+       if (altInput) {
+         await altInput.click();
+         await page.waitForTimeout(500);
+         await altInput.type('上海', {delay: 100});
+         await page.waitForTimeout(1000);
+         
+         const suggestions = await page.$$('.drop-result-list li');
+         if (suggestions.length > 0) {
+           await suggestions[0].click();
+           await page.waitForTimeout(1000);
+         }
+       }
+     }
+   } catch (e) {
+     console.log('输入目的地失败:', e);
+   }
+
+
+5. 设置关键词搜索：
+   try {
+     // 截图显示有一个ID为"keyword"的输入框用于关键词搜索
+     const keywordInput = await page.$('input#keyword');
+     if (keywordInput) {
+       await keywordInput.click();
+       await page.waitForTimeout(500);
+       await keywordInput.type('hilton tokyo', {delay: 100});
+       await page.waitForTimeout(1000);
+     }
+   } catch (e) {
+     console.log('设置关键词失败:', e);
+   }
+
+6. 点击搜索按钮：
+   try {
+     // 搜索按钮通常在页面右侧
+     const searchButton = await page.$('.search-btn, button.btn-search, button:has-text("搜索")');
+     if (searchButton) {
+       await searchButton.click();
+       console.log('已点击搜索按钮');
+       
+       // 等待搜索结果加载
+       await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 });
+       await page.waitForTimeout(3000);
+     } else {
+       // 备用方法：尝试通过XPath找到搜索按钮
+       const searchBtnByXPath = await page.$x('//button[contains(text(), "搜索")]');
+       if (searchBtnByXPath.length > 0) {
+         await searchBtnByXPath[0].click();
+         await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 });
+         await page.waitForTimeout(3000);
+       } else {
+         console.log('未找到搜索按钮，尝试使用Enter键');
+         await page.keyboard.press('Enter');
+         await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 });
+         await page.waitForTimeout(3000);
+       }
+     }
+   } catch (e) {
+     console.log('点击搜索按钮失败:', e);
+     
+     // 如果点击失败，尝试按回车键提交
+     await page.keyboard.press('Enter');
+     await page.waitForTimeout(5000);
+   }
+3. 在搜索结果页面选择合适的希尔顿酒店
+   // 从您提供的截图可以看到，搜索结果已经出现，并展示了多个希尔顿酒店选项
+   // 我们需要查找并点击东京希尔顿酒店
+   try {
+     // 根据截图，酒店列表使用了li.list-item-target.list-item-target-t元素
+     const hotelCards = await page.$$('div.hotel-card, li.list-item-target, div.hotel-info');
+     
+     for (const card of hotelCards) {
+       // 检查酒店名称是否包含"希尔顿东京"或"Hilton Tokyo"
+       const nameElement = await card.$('.hotel-title, .hotel-subtitle, div:has-text("希尔顿东京")');
+       if (nameElement) {
+         const name = await nameElement.evaluate(el => el.textContent.trim());
+         if (name.includes('希尔顿') && name.includes('东京')) {
+           // 找到了目标酒店，点击进入详情页
+           await nameElement.click();
+           await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 });
+           await page.waitForTimeout(3000);
+           console.log('已点击进入东京希尔顿酒店详情页');
+           break;
+         }
+       }
+     }
+   } catch (e) {
+     console.log('选择酒店失败:', e);
+   }
+
+4. 在酒店详情页选择房型并预订
+   // 从截图来看，现在已经到了酒店详情页，需要选择房型和点击预订按钮
+   try {
+     // 等待房型列表加载
+     await page.waitForSelector('div.commonRoomCard_BpNjl, div[class*="commonRoomCard"]', { timeout: 30000 });
+     
+     // 选择第一个可用的房型
+     const roomCards = await page.$$('div.commonRoomCard_BpNjl, div[class*="commonRoomCard"]');
+     if (roomCards.length > 0) {
+       // 检查该房型是否有预订按钮
+       const bookButton = await roomCards[0].$('span.btn-txt, button:has-text("预订")');
+       
+       if (bookButton) {
+         // 点击预订按钮
+         await bookButton.click();
+         await page.waitForTimeout(3000);
+         console.log('已点击房型预订按钮');
+         
+         // 等待可能出现的确认弹窗或导航到预订页面
+         try {
+           // 检查是否有确认弹窗
+           const confirmButton = await page.$('button:has-text("确定"), button:has-text("确认")');
+           if (confirmButton) {
+             await confirmButton.click();
+             await page.waitForTimeout(2000);
+           }
+         } catch (e) {
+           console.log('无需确认或确认失败:', e);
+         }
+       } else {
+         console.log('该房型没有可用的预订按钮');
+       }
+     } else {
+       console.log('未找到可选房型');
+     }
+   } catch (e) {
+     console.log('选择房型或预订失败:', e);
+   }
+
+5. 提取价格信息并比较
+   // 从截图中可以看到，房间价格显示在页面右侧
+   // 我们将提取价格信息进行比较
+   try {
+     const priceElements = await page.$$('div.saleRoomItemBox-priceBox-displayPrice_gwi0r span, span:has-text("¥")');
+     const prices = [];
+     
+     for (const priceElement of priceElements) {
+       const priceText = await priceElement.evaluate(el => el.textContent.trim());
+       // 提取价格数字
+       const match = priceText.match(/¥([\d,]+)/);
+       if (match) {
+         const price = Number(match[1].replace(',', ''));
+         prices.push(price);
+       }
+     }
+     
+     if (prices.length > 0) {
+       // 找出最低价格
+       const minPrice = Math.min(...prices);
+       console.log(`找到${prices.length}个价格选项，最低价格为¥${minPrice}`);
+     } else {
+       console.log('未找到价格信息');
+     }
+   } catch (e) {
+     console.log('提取价格信息失败:', e);
+   }
+
+6. 总结查找结果
+   // 最后，我们总结查找到的酒店信息
+   await page.evaluate(() => {
+     // 提取酒店名称
+     const hotelName = document.querySelector('.hotel-title, .hotel-subtitle')?.textContent.trim() || '未找到酒店名称';
+     
+     // 提取酒店评分
+     const rating = document.querySelector('.rate-number, span:has-text("好")')?.textContent.trim() || '未找到评分';
+     
+     // 提取酒店地址
+     const address = document.querySelector('.hotel-position, span:has-text("地区")')?.textContent.trim() || '未找到地址';
+     
+     // 提取最低价格
+     const priceElements = document.querySelectorAll('span:has-text("¥")');
+     let minPrice = '未找到价格';
+     for (const el of priceElements) {
+       const text = el.textContent.trim();
+       if (text.includes('¥')) {
+         minPrice = text;
+         break;
+       }
+     }
+     
+     console.log(`
+     酒店名称: ${hotelName}
+     评分: ${rating}
+     地址: ${address}
+     最低价格: ${minPrice}
+     预订日期: 6月18日至6月23日
+     `);
+   });

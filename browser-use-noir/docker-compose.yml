@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: playwright-browser
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: python browser.py
+    environment:
+      - OPENROUTER_API_KEY=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
+    restart: unless-stopped 
